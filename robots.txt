@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Block nothing — all tools are public and indexable
+Disallow:
+
+# Sitemap location
+Sitemap: https://tool.isouti.net/sitemap.xml
