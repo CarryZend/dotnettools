@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C# Regex Tester Online — Test .NET Regex Patterns | DotNetKit</title>
+  <meta name="description" content="Test C# / .NET regex patterns online with named groups, RegexOptions, match highlighting, and C# code generation. Supports System.Text.RegularExpressions syntax. Free, no signup, runs in your browser.">
+  <meta name="keywords" content="c# regex tester, .net regex tester, c# regular expression, system.text.regularexpressions, regex online, named groups c#">
+  <meta property="og:title" content="C# Regex Tester Online — Test .NET Regex Patterns">
+  <meta property="og:description" content="Test C# regex patterns with named groups, RegexOptions, and code generation. Free, no signup.">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://dotnetkit.dev/regex-tester/">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "C# Regex Tester",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Web",
+    "description": "Test C# / .NET regex patterns online with named groups, RegexOptions, and C# code generation.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "url": "https://dotnetkit.dev/regex-tester/"
+  }
+  </script>
+</head>
+<body>
+  <header>
+    <div class="container header-inner">
+      <a href="../" class="logo">
+        <span class="logo-icon">#</span>
+        DotNetKit
+      </a>
+      <nav>
+        <ul>
+          <li><a href="../">Tools</a></li>
+          <li><a href="https://github.com/dotnetkit" target="_blank">GitHub</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container tool-page">
+    <div class="tool-header">
+      <h1>C# Regex Tester</h1>
+      <p>Test .NET regex patterns with <code>System.Text.RegularExpressions</code> syntax, named groups, and C# code generation.</p>
+    </div>
+
+    <div class="regex-layout">
+      <!-- Pattern Input -->
+      <div class="panel">
+        <div class="panel-header">
+          <span><span class="status-dot ok" id="patternStatus"></span>Pattern</span>
+          <span id="patternError" style="color: var(--red); font-size: 12px; text-transform: none;"></span>
+        </div>
+        <div class="panel-body">
+          <div class="pattern-row">
+            <span class="pattern-prefix">/</span>
+            <input type="text" id="patternInput" class="mono" placeholder="Enter your regex pattern..." value="(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})" spellcheck="false" autocomplete="off">
+            <span class="pattern-prefix">/gm</span>
+          </div>
+          <div class="flags-row">
+            <span class="flag-chip active" data-flag="g"><code>g</code> Global</span>
+            <span class="flag-chip" data-flag="i"><code>i</code> IgnoreCase</span>
+            <span class="flag-chip active" data-flag="m"><code>m</code> Multiline</span>
+            <span class="flag-chip" data-flag="s"><code>s</code> Singleline</span>
+            <span class="flag-chip" data-flag="x"><code>x</code> IgnorePatternWhitespace</span>
+            <span class="flag-chip" data-flag="y"><code>y</code> Sticky</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Test Input + Match Display -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="panel">
+          <div class="panel-header">Test String</div>
+          <div class="panel-body">
+            <textarea id="testInput" spellcheck="false" placeholder="Enter text to test against..." style="min-height: 200px;">Date: 2026-09-27
+Release: 2025-12-01
+Legacy: 1999-01-15
+Invalid: 26-09-27</textarea>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">Match Preview <span id="matchCount" style="text-transform: none; font-weight: 400; color: var(--text-muted);"></span></div>
+          <div class="panel-body">
+            <div id="matchDisplay" class="mono"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs: Results / Code / Replace -->
+      <div class="panel">
+        <div class="panel-body">
+          <div class="tabs">
+            <div class="tab active" data-tab="results">Match Results</div>
+            <div class="tab" data-tab="code">C# Code</div>
+            <div class="tab" data-tab="replace">Replace</div>
+          </div>
+
+          <div class="tab-content active" id="tab-results">
+            <div id="resultsContainer">
+              <div class="empty-state">Enter a pattern and test string to see matches.</div>
+            </div>
+          </div>
+
+          <div class="tab-content" id="tab-code">
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode()">Copy</button>
+              <pre id="codeOutput"></pre>
+            </div>
+          </div>
+
+          <div class="tab-content" id="tab-replace">
+            <div style="margin-bottom: 12px;">
+              <label style="font-size: 13px; color: var(--text-muted); display: block; margin-bottom: 4px;">Replacement Pattern <span style="color: var(--text-muted);">(use $1, ${name}, $$)</span></label>
+              <input type="text" id="replaceInput" value="${day}/${month}/${year}" spellcheck="false" style="width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: var(--mono); font-size: 14px; padding: 10px 12px; outline: none;">
+            </div>
+            <div class="panel" style="margin-top: 12px;">
+              <div class="panel-header">Result</div>
+              <div class="panel-body">
+                <div id="replaceOutput" class="mono" style="white-space: pre-wrap; word-break: break-all; font-size: 14px; line-height: 1.8;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEO Content -->
+    <div class="seo-content">
+      <h2>About this C# Regex Tester</h2>
+      <p>This regex tester is built specifically for .NET developers working with <code>System.Text.RegularExpressions.Regex</code>. Unlike generic online regex testers that use JavaScript or Python engines, this tool accounts for .NET-specific regex features and generates ready-to-use C# code.</p>
+
+      <h2>.NET Regex Features Supported</h2>
+      <p><strong>Named groups:</strong> Use <code>(?&lt;name&gt;pattern)</code> or <code>(?'name'pattern)</code> syntax. Named groups are displayed in the results table and available in replacement patterns via <code>${name}</code>.</p>
+      <p><strong>RegexOptions:</strong> The flag chips correspond to .NET RegexOptions — <code>IgnoreCase</code>, <code>Multiline</code>, <code>Singleline</code>, and <code>IgnorePatternWhitespace</code>. The generated C# code includes the correct <code>RegexOptions</code> enum values.</p>
+      <p><strong>C# code generation:</strong> Get copy-paste ready C# code with proper verbatim string literals (<code>@"..."</code>), RegexOptions flags, and idiomatic patterns for <code>Regex.Match</code>, <code>Regex.Matches</code>, and <code>Regex.Replace</code>.</p>
+
+      <h2>Common .NET Regex Patterns</h2>
+      <p><strong>Date matching:</strong> <code>(?\d{4})-(?\d{2})-(?\d{2})</code> — captures year, month, day as named groups</p>
+      <p><strong>Email validation:</strong> <code>[\w.+-]+@[\w-]+\.[\w.-]+</code></p>
+      <p><strong>URL extraction:</strong> <code>https?://[\w.-]+(?:/[\w./?&=-]*)?</code></p>
+      <p><strong>Phone number:</strong> <code>(?\d{3})[-.\s]?(?\d{3})[-.\s]?(?\d{4})</code></p>
+
+      <h2>JavaScript vs .NET Regex Differences</h2>
+      <p>While this tool runs in the browser using the JavaScript regex engine for real-time feedback, the generated C# code and pattern documentation reflect .NET behavior. Key differences to be aware of: .NET supports balancing group definitions <code>(?&lt;name1-name2&gt;)</code>, inline <code>(?imnsx)</code> options, and <code>RegexOptions.RightToLeft</code> — features not available in JavaScript. For patterns using these advanced features, test directly in your .NET application.</p>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>DotNetKit &mdash; Built for .NET developers. &copy; 2026</p>
+    </div>
+  </footer>
+
+  <script>
+    // ===== State =====
+    let activeFlags = new Set(['g', 'm']);
+    const patternInput = document.getElementById('patternInput');
+    const testInput = document.getElementById('testInput');
+    const matchDisplay = document.getElementById('matchDisplay');
+    const matchCount = document.getElementById('matchCount');
+    const resultsContainer = document.getElementById('resultsContainer');
+    const patternStatus = document.getElementById('patternStatus');
+    const patternError = document.getElementById('patternError');
+    const codeOutput = document.getElementById('codeOutput');
+    const replaceInput = document.getElementById('replaceInput');
+    const replaceOutput = document.getElementById('replaceOutput');
+
+    // ===== Flag Chips =====
+    document.querySelectorAll('.flag-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const flag = chip.dataset.flag;
+        if (activeFlags.has(flag)) {
+          activeFlags.delete(flag);
+          chip.classList.remove('active');
+        } else {
+          activeFlags.add(flag);
+          chip.classList.add('active');
+        }
+        runRegex();
+      });
+    });
+
+    // ===== Tabs =====
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+        runRegex();
+      });
+    });
+
+    // ===== Extract named groups from pattern =====
+    function extractNamedGroups(pattern) {
+      const groups = [];
+      // Match (?<name>...) and (?'name'...)
+      const namedRe = /\(\?(?:<(\w+)>|'(\w+)')/g;
+      let m;
+      while ((m = namedRe.exec(pattern)) !== null) {
+        groups.push(m[1] || m[2]);
+      }
+      return groups;
+    }
+
+    // ===== Build JS regex flags from active set =====
+    function getFlags() {
+      return Array.from(activeFlags).join('');
+    }
+
+    // ===== Map flags to .NET RegexOptions =====
+    function getRegexOptions() {
+      const opts = [];
+      if (activeFlags.has('i')) opts.push('RegexOptions.IgnoreCase');
+      if (activeFlags.has('m')) opts.push('RegexOptions.Multiline');
+      if (activeFlags.has('s')) opts.push('RegexOptions.Singleline');
+      if (activeFlags.has('x')) opts.push('RegexOptions.IgnorePatternWhitespace');
+      return opts.length ? opts.join(' | ') : 'RegexOptions.None';
+    }
+
+    // ===== Main regex runner =====
+    function runRegex() {
+      const pattern = patternInput.value;
+      const testStr = testInput.value;
+      const flags = getFlags();
+
+      // Reset error state
+      patternError.textContent = '';
+      patternStatus.className = 'status-dot ok';
+      patternInput.classList.remove('error');
+
+      if (!pattern) {
+        matchDisplay.innerHTML = '<span style="color: var(--text-muted);">Enter a pattern to see matches.</span>';
+        matchCount.textContent = '';
+        resultsContainer.innerHTML = '<div class="empty-state">Enter a pattern and test string to see matches.</div>';
+        codeOutput.innerHTML = '';
+        replaceOutput.innerHTML = '<span style="color: var(--text-muted);">Enter a pattern to see replacement result.</span>';
+        return;
+      }
+
+      let regex;
+      try {
+        regex = new RegExp(pattern, flags);
+      } catch (e) {
+        patternStatus.className = 'status-dot err';
+        patternInput.classList.add('error');
+        patternError.textContent = e.message;
+        matchDisplay.innerHTML = '<span style="color: var(--red);">Invalid pattern</span>';
+        matchCount.textContent = '';
+        resultsContainer.innerHTML = '<div class="empty-state" style="color: var(--red);">' + e.message + '</div>';
+        replaceOutput.innerHTML = '<span style="color: var(--red);">Invalid pattern</span>';
+        return;
+      }
+
+      const namedGroups = extractNamedGroups(pattern);
+
+      // Run matches
+      let matches = [];
+      if (activeFlags.has('g')) {
+        let m;
+        while ((m = regex.exec(testStr)) !== null) {
+          matches.push(m);
+          if (m.index === regex.lastIndex) regex.lastIndex++;
+        }
+      } else {
+        const m = regex.exec(testStr);
+        if (m) matches.push(m);
+      }
+
+      // Update match count
+      matchCount.textContent = matches.length + ' match' + (matches.length !== 1 ? 'es' : '');
+
+      // Render match preview with highlights
+      renderMatchPreview(testStr, matches);
+
+      // Render results table
+      renderResults(matches, namedGroups);
+
+      // Generate C# code
+      generateCode(pattern, namedGroups, matches);
+
+      // Replace
+      renderReplace(regex, testStr);
+    }
+
+    // ===== Render match preview =====
+    function renderMatchPreview(text, matches) {
+      if (matches.length === 0) {
+        matchDisplay.innerHTML = '<span style="color: var(--text-muted);">No matches found.</span>';
+        return;
+      }
+
+      let html = '';
+      let lastIdx = 0;
+      let colorToggle = 0;
+
+      matches.forEach((m) => {
+        // Add text before match
+        if (m.index > lastIdx) {
+          html += escapeHtml(text.slice(lastIdx, m.index));
+        }
+        // Add highlighted match
+        const cls = colorToggle % 2 === 0 ? 'match-highlight' : 'match-highlight';
+        html += '<span class="' + cls + '">' + escapeHtml(m[0]) + '</span>';
+        lastIdx = m.index + m[0].length;
+        colorToggle++;
+      });
+
+      // Add remaining text
+      if (lastIdx < text.length) {
+        html += escapeHtml(text.slice(lastIdx));
+      }
+
+      matchDisplay.innerHTML = html;
+    }
+
+    // ===== Render results table =====
+    function renderResults(matches, namedGroups) {
+      if (matches.length === 0) {
+        resultsContainer.innerHTML = '<div class="empty-state">No matches found.</div>';
+        return;
+      }
+
+      let html = '<table class="results-table"><thead><tr><th>#</th><th>Match</th><th>Index</th><th>Length</th>';
+
+      // Add named group columns
+      namedGroups.forEach(name => {
+        html += '<th class="group-name">' + escapeHtml(name) + '</th>';
+      });
+
+      // Add numbered group columns if any
+      const maxGroups = matches.reduce((max, m) => Math.max(max, m.length), 0);
+      for (let i = 1; i < maxGroups; i++) {
+        html += '<th>Group ' + i + '</th>';
+      }
+
+      html += '</tr></thead><tbody>';
+
+      matches.forEach((m, idx) => {
+        html += '<tr>';
+        html += '<td style="color: var(--text-muted);">' + (idx + 1) + '</td>';
+        html += '<td style="color: var(--green);">' + escapeHtml(m[0]) + '</td>';
+        html += '<td style="color: var(--text-muted);">' + m.index + '</td>';
+        html += '<td style="color: var(--text-muted);">' + m[0].length + '</td>';
+
+        // Named group values
+        namedGroups.forEach(name => {
+          const val = m.groups ? m.groups[name] : undefined;
+          html += '<td style="color: var(--accent-light);">' + (val !== undefined ? escapeHtml(val) : '<span style="color: var(--text-muted);">—</span>') + '</td>';
+        });
+
+        // Numbered group values
+        for (let i = 1; i < maxGroups; i++) {
+          const val = m[i];
+          html += '<td>' + (val !== undefined ? escapeHtml(val) : '<span style="color: var(--text-muted);">—</span>') + '</td>';
+        }
+
+        html += '</tr>';
+      });
+
+      html += '</tbody></table>';
+      resultsContainer.innerHTML = html;
+    }
+
+    // ===== Generate C# code =====
+    function generateCode(pattern, namedGroups, matches) {
+      const opts = getRegexOptions();
+      const verbatimPattern = '@"' + pattern.replace(/"/g, '""') + '"';
+
+      let code = '';
+
+      // Regex declaration
+      code += '<span class="kw">var</span> regex = <span class="kw">new</span> <span class="type">Regex</span>(' + verbatimPattern + ', ' + opts + ');\n\n';
+
+      // Match / Matches
+      if (activeFlags.has('g')) {
+        code += '<span class="kw">var</span> matches = regex.Matches(input);\n';
+        code += '<span class="kw">foreach</span> (<span class="type">Match</span> m <span class="kw">in</span> matches)\n{\n';
+
+        if (namedGroups.length > 0) {
+          namedGroups.forEach(name => {
+            code += '    <span class="kw">var</span> ' + name + ' = m.Groups[<span class="str">"' + name + '"</span>].Value;\n';
+          });
+        }
+
+        code += '    <span class="type">Console</span>.WriteLine($<span class="str">"Match: {m.Value} at index {m.Index}"</span>);\n';
+        code += '}';
+      } else {
+        code += '<span class="kw">var</span> match = regex.Match(input);\n';
+        code += '<span class="kw">if</span> (match.Success)\n{\n';
+
+        if (namedGroups.length > 0) {
+          namedGroups.forEach(name => {
+            code += '    <span class="kw">var</span> ' + name + ' = match.Groups[<span class="str">"' + name + '"</span>].Value;\n';
+          });
+        }
+
+        code += '    <span class="type">Console</span>.WriteLine($<span class="str">"Match: {match.Value} at index {match.Index}"</span>);\n';
+        code += '}';
+      }
+
+      // Replace example
+      code += '\n\n<span class="comment">// Replace</span>\n';
+      code += '<span class="kw">var</span> result = regex.Replace(input, ' + (replaceInput.value ? '@"' + replaceInput.value.replace(/"/g, '""') + '"' : 'replacement') + ');';
+
+      codeOutput.innerHTML = code;
+    }
+
+    // ===== Render replace =====
+    function renderReplace(regex, testStr) {
+      const replacement = replaceInput.value;
+      if (!replacement) {
+        replaceOutput.innerHTML = '<span style="color: var(--text-muted);">Enter a replacement pattern.</span>';
+        return;
+      }
+
+      try {
+        // Convert .NET replacement syntax to JS
+        // ${name} -> needs named group support
+        // $1, $2 -> numbered groups
+        // $$ -> literal $
+        let jsReplacement = replacement
+          .replace(/\$\$/g, '\x00DOLLAR\x00')
+          .replace(/\$\{(\w+)\}/g, '$$$1')
+          .replace(/\x00DOLLAR\x00/g, '$$$$');
+
+        const result = testStr.replace(regex, jsReplacement);
+        replaceOutput.innerHTML = escapeHtml(result);
+      } catch (e) {
+        replaceOutput.innerHTML = '<span style="color: var(--red);">' + e.message + '</span>';
+      }
+    }
+
+    // ===== Utility: escape HTML =====
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // ===== Copy code =====
+    function copyCode() {
+      const text = codeOutput.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
+      });
+    }
+
+    // ===== Event listeners =====
+    patternInput.addEventListener('input', runRegex);
+    testInput.addEventListener('input', runRegex);
+    replaceInput.addEventListener('input', runRegex);
+
+    // ===== Initial run =====
+    runRegex();
+  </script>
+</body>
+</html>
